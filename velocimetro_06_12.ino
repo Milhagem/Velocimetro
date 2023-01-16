@@ -1,11 +1,10 @@
 #include <Arduino.h>
-#include <INA.h>
-#include <U8glib.h>
+//#include <U8glib.h>
 #include <stdlib.h>
 #include <Wire.h>
 
-U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NO_ACK);
-INA_Class INA;
+//U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NO_ACK);
+
 
 // ========================================================================================================
 // --- Variáveis Globais --- 
@@ -69,18 +68,15 @@ void contador()
 // --- Configurações Iniciais ---
 void setup()
 {
-  Serial.begin(9600);                                             // Begin serial communication.
+  Serial.begin(115200);                                        // Begin serial communication.
+  //Defina o pino 32 como entrada. 
+  pinMode(2, INPUT);
   attachInterrupt(digitalPinToInterrupt(2), contador, RISING); // Enable interruption pin 2 when going from LOW to HIGH.
+  delay(100);
 
-  INA.begin(80, 1000);
-  INA.setBusConversion(8500);
-  INA.setShuntConversion(8500);
-  INA.setAveraging(128);
-  INA.alertOnConversion(true);
-  INA.setMode(INA_MODE_CONTINUOUS_BOTH);
-  INA.alertOnBusOverVoltage(true, 40000);
+  Serial.println(F("Setup done"));
 
-  u8g.begin();
+//  u8g.begin();
 
   pulsosAux = 0;
   pulsos  = 0;
@@ -118,7 +114,7 @@ void loop()
     }else{
       indiceRetirada = indiceDeposito -1;
     }
-	  
+
     //soma dos periodos dos pulsos necessarios para calcular a velocidade
     somaPeriodos = timenew - timecontador;
     for(int i=0; i<RemapedpulsosParaCalcularVelocidade; i++){
@@ -145,11 +141,18 @@ void loop()
     rpm = (60 * 1000 / (pulsos_por_volta) ) / (millis() - timeold) * pulsos;
     */
     
-    Serial.print("RPM = ");
-    Serial.println(rpm, DEC);
+    Serial.print(F("indiceRetirada = "));
+    Serial.println(indiceRetirada);
+    Serial.print(F("velocidadeKm = "));
+    Serial.println(velocidadeKm);
+    Serial.print(F("indiceDeposito = "));
+    Serial.println(indiceDeposito);
+    Serial.print(F("interrupcao = "));
+    Serial.println(digitalRead(2));
 
     //Mostra o valor de RPM no display
     if (velocidadeKm != oldVelocidadeKm) {
+      /*
       u8g.firstPage();
       do {
         u8g.setFont(u8g_font_courR10);
@@ -167,7 +170,7 @@ void loop()
         u8g.print("Vel_KM");
     
       } while ( u8g.nextPage() );
-    
+    */
     }
 
    somaPeriodos = 0;
@@ -178,4 +181,3 @@ void loop()
     attachInterrupt(digitalPinToInterrupt(2), contador, RISING);
   } 
 } //end loop
-
