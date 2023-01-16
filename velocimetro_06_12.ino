@@ -112,13 +112,7 @@ void loop()
     int RemapedpulsosParaCalcularVelocidade = map(pulsos, 0, 12, 3, 7);  // Remap the period range to the reading range.
     RemapedpulsosParaCalcularVelocidade = constrain(RemapedpulsosParaCalcularVelocidade, 3, 7);  // Constrain the value so it doesn't go below or above the limits.
     
-    //indice retirada sera igual ao local do armazenamento do ultimo pulso
-    if(indiceDeposito == 0){
-      indiceRetirada = amostras - 1;
-    }else{
-      indiceRetirada = indiceDeposito -1;
-    }
-
+		indiceRetirada = indiceDeposito;
     //soma dos periodos dos pulsos necessarios para calcular a velocidade
     somaPeriodos = timenew - timecontador;
     for(int i=0; i<RemapedpulsosParaCalcularVelocidade; i++){
@@ -178,3 +172,4 @@ void loop()
     attachInterrupt(digitalPinToInterrupt(2), contador, RISING);
   } 
 } //end loop
+
